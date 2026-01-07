@@ -1,3 +1,9 @@
+#!/bin/bash
+
+echo "Création de tous les modules fonctionnels..."
+
+# Module Articles
+cat > "app/(dashboard)/articles/page.tsx" << 'EOFARTICLES'
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -226,3 +232,14 @@ export default function ArticlesPage() {
     </div>
   )
 }
+EOFARTICLES
+
+echo "✅ Articles module created"
+
+# Commit et push
+cd /home/ubuntu/facturation-nextjs
+git add .
+git commit -m "feat: Add functional modules (Clients + Articles with full CRUD)"
+git push origin master
+
+echo "✅ All modules created and pushed!"
