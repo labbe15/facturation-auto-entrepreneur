@@ -323,11 +323,17 @@ export default function NewInvoicePage() {
                     <Input
                       label="Quantité *"
                       type="number"
-                      step="0.01"
+                      step="1"
                       min="0"
                       value={line.quantity}
                       onChange={(e) => updateLine(index, 'quantity', parseFloat(e.target.value) || 0)}
                       required
+                      onKeyDown={(e) => {
+                        // Permettre les décimales avec la touche '.'
+                        if (e.key === '.') {
+                          e.currentTarget.step = '0.01'
+                        }
+                      }}
                     />
 
                     <Input
@@ -452,12 +458,22 @@ export default function NewInvoicePage() {
               onChange={(e) => setNewArticle({ ...newArticle, tva_rate: parseFloat(e.target.value) || 0 })}
             />
 
-            <Input
+            <Select
               label="Unité"
               value={newArticle.unit}
               onChange={(e) => setNewArticle({ ...newArticle, unit: e.target.value })}
-              placeholder="unité, heure, jour..."
-            />
+            >
+              <option value="unité">Unité</option>
+              <option value="heure">Heure</option>
+              <option value="jour">Jour</option>
+              <option value="mois">Mois</option>
+              <option value="mètre linéaire">Mètre linéaire</option>
+              <option value="m²">Mètre carré (m²)</option>
+              <option value="km">Kilomètre</option>
+              <option value="kg">Kilogramme</option>
+              <option value="litre">Litre</option>
+              <option value="forfait">Forfait</option>
+            </Select>
           </div>
 
           <label className="flex items-center gap-2 cursor-pointer">
