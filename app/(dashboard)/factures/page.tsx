@@ -27,10 +27,7 @@ export default function InvoicesPage() {
 
     const { data, error } = await supabase
       .from('invoices')
-      .select(\`
-        *,
-        clients(name)
-      \`)
+      .select('*, clients(name)')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
@@ -67,7 +64,7 @@ export default function InvoicesPage() {
       overdue: 'En retard'
     }
     return (
-      <span className={\`px-2 py-1 rounded text-xs font-semibold \${colors[status as keyof typeof colors] || colors.draft}\`}>
+      <span className={`px-2 py-1 rounded text-xs font-semibold ${colors[status as keyof typeof colors] || colors.draft}`}>
         {labels[status as keyof typeof labels] || status}
       </span>
     )
@@ -122,7 +119,7 @@ export default function InvoicesPage() {
                   <TableCell>{getStatusBadge(invoice.status)}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Link href={\`/factures/\${invoice.id}\`}>
+                      <Link href={`/factures/${invoice.id}`}>
                         <Button size="sm" variant="outline">
                           <Edit size={16} />
                         </Button>

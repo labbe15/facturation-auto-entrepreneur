@@ -24,7 +24,7 @@ export default function QuotesPage() {
 
     const { data, error } = await supabase
       .from('quotes')
-      .select(\`*, clients(name)\`)
+      .select('*, clients(name)')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
@@ -48,7 +48,7 @@ export default function QuotesPage() {
       rejected: 'bg-red-200 text-red-800',
       expired: 'bg-orange-200 text-orange-800'
     }
-    return <span className={\`px-2 py-1 rounded text-xs font-semibold \${colors[status as keyof typeof colors]}\`}>{status}</span>
+    return <span className={`px-2 py-1 rounded text-xs font-semibold ${colors[status as keyof typeof colors]}`}>{status}</span>
   }
 
   return (
