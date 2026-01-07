@@ -2,10 +2,11 @@ import React from 'react'
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string
-  options: Array<{ value: string; label: string }>
+  options?: Array<{ value: string; label: string }>
+  children?: React.ReactNode
 }
 
-export function Select({ label, options, className = '', ...props }: SelectProps) {
+export function Select({ label, options, children, className = '', ...props }: SelectProps) {
   return (
     <div className="w-full">
       {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
@@ -13,9 +14,9 @@ export function Select({ label, options, className = '', ...props }: SelectProps
         className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 ${className}`}
         {...props}
       >
-        {options.map(opt => (
+        {options ? options.map(opt => (
           <option key={opt.value} value={opt.value}>{opt.label}</option>
-        ))}
+        )) : children}
       </select>
     </div>
   )
