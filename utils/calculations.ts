@@ -35,5 +35,5 @@ export function formatCurrency(amount: number) {
 }
 
 export function formatDate(date: string | Date) {
-  return new Intl.DateFormat('fr-FR').format(new Date(date))
+  return new Date(date).toLocaleDateString('fr-FR')
 }
