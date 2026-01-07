@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Card } from '@/components/ui/card'
-import { Plus, Trash } from 'lucide-react'
+import { Plus, Trash, Package } from 'lucide-react'
 import { createClient } from '@/lib/supabase-client'
 import { calculateTotals } from '@/utils/calculations'
+import { Dialog } from '@/components/ui/dialog'
 
 interface InvoiceLine {
   description: string
@@ -33,10 +34,68 @@ export default function NewInvoicePage() {
   const [lines, setLines] = useState<InvoiceLine[]>([
     { description: '', quantity: 1, unit_price: 0, tva_rate: 20 }
   ])
+  const [showArticleModal, setShowArticleModal] = useState(false)
+  const [newArticle, setNewArticle] = useState({
+    name: '',
+    description: '',
+    unit_price: 0,
+    tva_rate: 20,
+    unit: 'unité',
+    save_to_catalog: true
+  })
 
   useEffect(() => {
     loadData()
   }, [])
+
+  const createArticle = async () => {
+    if (!newArticle.name || newArticle.unit_price < 0) {
+      alert('Veuillez remplir tous les champs requis')
+      return
+    }
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    if (newArticle.save_to_catalog) {
+      // Sauvegarder dans le catalogue
+      const { data, error } = await supabase
+        .from('articles')
+        .insert([{
+          user_id: user.id,
+          name: newArticle.name,
+          description: newArticle.description,
+          unit_price: newArticle.unit_price,
+          tva_rate: newArticle.tva_rate,
+          unit: newArticle.unit
+        }])
+        .select()
+        .single()
+
+      if (!error && data) {
+        setArticles([...articles, data])
+      }
+    }
+
+    // Ajouter une nouvelle ligne avec l'article
+    setLines([...lines, {
+      description: newArticle.name,
+      quantity: 1,
+      unit_price: newArticle.unit_price,
+      tva_rate: newArticle.tva_rate
+    }])
+
+    // Réinitialiser le formulaire
+    setNewArticle({
+      name: '',
+      description: '',
+      unit_price: 0,
+      tva_rate: 20,
+      unit: 'unité',
+      save_to_catalog: true
+    })
+    setShowArticleModal(false)
+  }
 
   const loadData = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -219,10 +278,16 @@ export default function NewInvoicePage() {
         <Card className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Lignes de facturation</h2>
-            <Button type="button" onClick={addLine} size="sm">
-              <Plus className="mr-2" size={16} />
-              Ajouter une ligne
-            </Button>
+            <div className="flex gap-2">
+              <Button type="button" onClick={() => setShowArticleModal(true)} size="sm" variant="secondary">
+                <Package className="mr-2" size={16} />
+                Créer un article
+              </Button>
+              <Button type="button" onClick={addLine} size="sm">
+                <Plus className="mr-2" size={16} />
+                Ajouter une ligne
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -348,6 +413,75 @@ export default function NewInvoicePage() {
           </Button>
         </div>
       </form>
+
+      <Dialog open={showArticleModal} onClose={() => setShowArticleModal(false)} title="Créer un article">
+        <div className="space-y-4">
+          <Input
+            label="Nom de l'article *"
+            value={newArticle.name}
+            onChange={(e) => setNewArticle({ ...newArticle, name: e.target.value })}
+            placeholder="Ex: Prestation de conseil"
+            required
+          />
+          
+          <Input
+            label="Description"
+            value={newArticle.description}
+            onChange={(e) => setNewArticle({ ...newArticle, description: e.target.value })}
+            placeholder="Description détaillée (optionnel)"
+          />
+
+          <div className="grid grid-cols-3 gap-3">
+            <Input
+              label="Prix unitaire HT *"
+              type="number"
+              step="0.01"
+              min="0"
+              value={newArticle.unit_price}
+              onChange={(e) => setNewArticle({ ...newArticle, unit_price: parseFloat(e.target.value) || 0 })}
+              required
+            />
+
+            <Input
+              label="TVA (%)"
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              value={newArticle.tva_rate}
+              onChange={(e) => setNewArticle({ ...newArticle, tva_rate: parseFloat(e.target.value) || 0 })}
+            />
+
+            <Input
+              label="Unité"
+              value={newArticle.unit}
+              onChange={(e) => setNewArticle({ ...newArticle, unit: e.target.value })}
+              placeholder="unité, heure, jour..."
+            />
+          </div>
+
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={newArticle.save_to_catalog}
+              onChange={(e) => setNewArticle({ ...newArticle, save_to_catalog: e.target.checked })}
+              className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"
+            />
+            <span className="text-sm text-gray-700">
+              Sauvegarder dans le catalogue d'articles (pour réutilisation)
+            </span>
+          </label>
+
+          <div className="flex gap-3 pt-4">
+            <Button type="button" onClick={createArticle}>
+              {newArticle.save_to_catalog ? 'Créer et ajouter' : 'Ajouter uniquement'}
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setShowArticleModal(false)}>
+              Annuler
+            </Button>
+          </div>
+        </div>
+      </Dialog>
     </div>
   )
 }
