@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --primary: 239 84% 67%;
-  --primary-foreground: 0 0% 100%;
-}
-
 body {
   font-family: system-ui, -apple-system, sans-serif;
 }
