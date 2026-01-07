@@ -1,0 +1,36 @@
+{
+  "name": "facturation-auto-entrepreneur",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@supabase/supabase-js": "^2.47.10",
+    "@supabase/ssr": "^0.5.2",
+    "recharts": "^2.15.2",
+    "lucide-react": "^0.453.0",
+    "date-fns": "^4.1.0",
+    "jspdf": "^2.5.2",
+    "nodemailer": "^6.9.16",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.6",
+    "@types/react-dom": "^19.0.2",
+    "@types/nodemailer": "^6.4.17",
+    "tailwindcss": "^4.1.14",
+    "postcss": "^8.4.49",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "^15.1.6"
+  }
+}
