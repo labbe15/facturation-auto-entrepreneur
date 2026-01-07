@@ -116,7 +116,7 @@ export default function ClientsPage() {
     if (!formData.siret) return
     
     try {
-      const response = await fetch(\`/api/siret?siret=\${formData.siret}\`)
+      const response = await fetch(`/api/siret?siret=${formData.siret}`)
       const data = await response.json()
       
       if (data.name) {
