@@ -1,12 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { 
   LayoutDashboard, Users, FileText, FileCheck, 
   Package, Clock, TrendingUp, Calculator, 
   Bell, Settings, LogOut 
 } from 'lucide-react'
+import { createClient } from '@/lib/supabase-client'
 
 const menuItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -23,14 +24,22 @@ const menuItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const supabase = createClient()
+  
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
   
   return (
-    <div className="w-64 bg-indigo-900 text-white min-h-screen p-4">
+    <div className="w-64 bg-indigo-900 text-white min-h-screen p-4 flex flex-col">
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Facturation Pro</h1>
       </div>
       
-      <nav className="space-y-2">
+      <nav className="space-y-2 flex-1">
         {menuItems.map(item => {
           const Icon = item.icon
           const isActive = pathname === item.href
@@ -50,8 +59,11 @@ export function Sidebar() {
         })}
       </nav>
       
-      <div className="mt-auto pt-8">
-        <button className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-indigo-800 w-full transition-colors">
+      <div className="pt-4 border-t border-indigo-800">
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-indigo-800 w-full transition-colors"
+        >
           <LogOut size={20} />
           <span>Déconnexion</span>
         </button>
